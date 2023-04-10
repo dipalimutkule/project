@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart</title>
+    <style>
+        .container {
+    width: 1600px;
+    height: 600px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    text-align: center;
+    border: 3px solid rgb(244, 239, 239);
+    background-color: rgb(151, 120, 120);
+    padding-top: 80px;
+}
+
+        @media (max-width: 500px) {
+            .container {
+                width: 100%;
+                height: auto;
+                grid-template-columns: repeat(1, 1fr);
+                padding: 20px;
+            }
+        }
+        @media (min-width: 768px) {
+        .container {
+        max-width: 1200px;
+        height: 800px;
+        grid-template-columns: repeat(4, 1fr);
+        padding: 50px;
+        }
+        }
+
+
+        .container img {
+            width: 90%;
+            height: 500px;
+            border-radius: 5px;
+            margin: 30px 30px 30px 30px;
+        }
+        #order{
+            width: 30%;
+            font-size: 30px;
+            text-align: center;
+            margin: auto;
+            background-color: rgb(151, 120, 120);
+        }
+        h3{
+            text-align: center;
+            font-size: 30px;
+        }
+        #logo{
+            width: 150px;
+            height: 50px;
+        }
+        .options{
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            width: 1600px;
+            margin: auto;
+            font-size: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navbar">
+        <div class="options">
+            <img src="./Project_logo.png" id="logo" alt="">
+            <a href="./Kids_page.html">kids</a>
+            <a href="./Mens_page.html">Mens</a>
+            <a href="./Womens_page.html">Womens</a>
+            <a href="index.html">Homepage</a>
+            <a href="./cart.html">Cart</a>
+        </div>
+    </div>
+    <h3>Total Cart Price is ₹:-<span id="price">0</span></h3>
+    <div class="container"></div>
+   <div id="order"> <label for="proceed to order">Proceed to order</label>
+    <a href="./Payment.html" class="proceed-to-order-button">confirm order</a>
+</div>
+</body>
+<script>
+    let LSData = localStorage.getItem("cart");
+    if (LSData === null) {
+        LSData = [];
+    } else {
+        LSData = JSON.parse(LSData);
+    }
+    const container = document.querySelector(".container");
+    let paymentdata=localStorage.getItem("paymentdata");
+
+    Display(LSData);
+    function Display(data) {
+        container.innerHTML = "";
+        data.forEach((element,index) => {
+            const product = document.createElement("div");
+
+            const image = document.createElement("img");
+            image.setAttribute("src", element.img);
+
+            const price = document.createElement("p");
+            price.innerText = element.price;
+            if (element.price >= 1000) {
+                price.style.color = "red";
+            }
+            let increment=document.createElement("button");
+            increment.innerText="+";
+            increment.style.marginRight="10px"
+            increment.style.padding="10px"
+            increment.style.background="#00ACC1"
+            increment.style.color="red";
+            increment.style.fontSize="20px"
+
+            let decrement=document.createElement("button");
+            decrement.innerText="-";
+            decrement.style.marginRight="10px";
+            decrement.style.padding="10px"
+            decrement.style.background="#00ACC1";
+            decrement.style.color="red"
+            decrement.style.fontSize="20px"
+            
+            let quantity=document.createElement("span");
+            quantity.innerText="1";
+            quantity.style.marginRight="10px"
+            quantity.style.color="red";
+            quantity.style.fontSize="20px"
+            const category = document.createElement("p");
+            category.innerText = element.category;
+
+            const deleteFromCart = document.createElement("button");
+            deleteFromCart.innerText = "Delete";
+            deleteFromCart.style.padding="10px"
+            deleteFromCart.style.background="#00ACC1";
+            deleteFromCart.style.color="red"
+            deleteFromCart.style.fontSize="20px"
+            deleteFromCart.addEventListener("click", function () {
+                    data.splice(index,1);
+                localStorage.setItem("cart", JSON.stringify(data));
+                Display(data);
+            });
+            increment.addEventListener("click",function(){
+            element.quantity++;
+            localStorage.setItem("cart",JSON.stringify(LSData))
+            Display(LSData);
+            });
+
+            decrement.addEventListener("click",function(){
+            if(element.quantity>1){
+                element.quantity--;
+            localStorage.setItem("cart",JSON.stringify(data))
+            Display(data);
+            console.log(quantity)
+            }
+            
+            });
+            
+            const paymentdata=document.createElement("p");
+            paymentdata.innerText="";
+            paymentdata.addEventListener("click",function(){
+                paymentdata.push(element);
+                localStorage.setItem("paymentdata",JSON.stringify(paymentdata))
+                Display(paymentdata);
+            })
+            product.append(image, category,price,increment,quantity,decrement, deleteFromCart,paymentdata);
+            container.append(product);
+        });
+           let total = document.getElementById("price");
+            let sum = 0;
+            for (let i = 0; i < LSData.length; i++) {
+
+                sum+= LSData[i].price
+            }
+            total.innerText =sum
+            console.log(total);
+        }
+//  Display();
+  </script>
+
+</html>
